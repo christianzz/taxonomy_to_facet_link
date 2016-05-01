@@ -43,14 +43,14 @@ function taxonomy_to_facet_link_field_formatter_view($entity_type, $entity, $fie
         if (isset($display['settings']['link_only']) && $display['settings']['link_only']) {
           $element[$delta] = array(
             '#type' => 'item',
-            '#markup' => '/' . _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
+            '#markup' => '/' . _taxonomy_to_facet_link_create_solr_search_url($term->name, $term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
           );
         }
         else {
           $element[$delta] = array(
             '#type' => 'link',
             '#title' => $name,
-            '#href' => _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
+            '#href' => _taxonomy_to_facet_link_create_solr_search_url($term->name, $term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
             '#attributes' => array(
               'target' => $display['settings']['target'],
             ),
@@ -165,6 +165,7 @@ function taxonomy_to_facet_link_field_formatter_settings_summary($field, $instan
     if (current($terms)) {
       $term = current($terms);
       $generated_example_url = _taxonomy_to_facet_link_create_solr_search_url(
+        $term->name,
         $term->tid,
         $field['field_name'],
         $settings['search_path'],
@@ -180,7 +181,7 @@ function taxonomy_to_facet_link_field_formatter_settings_summary($field, $instan
 /**
  * Returns a solrsearch filter query link for a taxonomy term.
  */
-function _taxonomy_to_facet_link_create_solr_search_url($tid, $field_name, $search_path, $searcher) {
+function _taxonomy_to_facet_link_create_solr_search_url($term_name, $tid, $field_name, $search_path, $searcher) {
   if ($searcher == 'facetapi_searcher') {
     $link = 'taxonomy/term/' . $tid;
   }
@@ -197,7 +198,7 @@ function _taxonomy_to_facet_link_create_solr_search_url($tid, $field_name, $sear
     }
   }
   drupal_alter('apachesolr_taxonomy_link', $link, $context = array(
-    'term' => $term, 'field_name' => $field_name, 'search_path' => $search_path, 'searcher' => $searcher));
+    'term' => $term_name, 'field_name' => $field_name, 'search_path' => $search_path, 'searcher' => $searcher));
   return $link;
 }
 
